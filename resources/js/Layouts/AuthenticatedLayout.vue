@@ -40,6 +40,40 @@ const showingNavigationDropdown = ref(false);
                                     Dashboard
                                 </NavLink>
                             </div>
+                            <div
+                                class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex"
+                            >
+                                <NavLink
+                                    :href="route('admin')"
+                                    :active="route().current('admin')"
+                                >
+                                    Admin
+                                </NavLink>
+                            </div>
+
+                            <div
+                                class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex"
+                            >
+                                <NavLink
+                                    :href="route('employee')"
+                                    :active="route().current('employee')"
+                                >
+                                    Employee
+                                </NavLink>
+                            </div>
+
+                            <div
+                                class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex"
+                            >
+                                <NavLink
+                                    :href="route('customer')"
+                                    :active="route().current('customer')"
+                                >
+                                    Customer
+                                </NavLink>
+                            </div>
+
+
                         </div>
 
                         <div class="hidden sm:ms-6 sm:flex sm:items-center">
