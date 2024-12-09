@@ -37,7 +37,7 @@ class RegisteredUserController extends Controller
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 
-        $defaultRoleId = 3;
+        $defaultRoleId = 1;
 
         $user = User::create([
             'name' => $request->name,
