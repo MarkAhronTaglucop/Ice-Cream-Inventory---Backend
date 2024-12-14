@@ -18,7 +18,6 @@
           <h3 class="text-xl font-semibold text-blue-600">{{ iceCream.flavor }}</h3>
           <p class="text-gray-600 mt-2">{{ iceCream.description }}</p>
           <div class="mt-4 flex justify-between items-center">
-            <span class="text-lg font-bold text-blue-800">₱{{ iceCream.price.toFixed(2) }}</span>
             <button @click="viewDetails(iceCream)" class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition duration-300">View Details</button>
           </div>
         </div>
@@ -39,7 +38,6 @@
               <div class="mt-2">
                 <img :src="selectedIceCream.image" :alt="selectedIceCream.flavor" class="w-full h-48 object-cover rounded-md">
                 <p class="text-sm text-gray-500 mt-4">{{ selectedIceCream.description }}</p>
-                <p class="text-lg font-bold text-blue-800 mt-4">Price: ₱{{ selectedIceCream.price.toFixed(2) }}</p>
               </div>
             </div>
           </div>
@@ -62,11 +60,11 @@ import { Head } from "@inertiajs/vue3";
 
 // Assuming this is the ice creams data you get from the backend
 const iceCreams = ref([
-  { id: 1, flavor: 'Vanilla', description: 'Classic vanilla flavor', price: 50, image: 'https://via.placeholder.com/300x200.png?text=Vanilla' },
-  { id: 2, flavor: 'Chocolate', description: 'Rich chocolate flavor', price: 55, image: 'https://via.placeholder.com/300x200.png?text=Chocolate' },
-  { id: 3, flavor: 'Strawberry', description: 'Fresh strawberry flavor', price: 52, image: 'https://via.placeholder.com/300x200.png?text=Strawberry' },
-  { id: 4, flavor: 'Mint Chocolate Chip', description: 'Cool mint with chocolate chips', price: 58, image: 'https://via.placeholder.com/300x200.png?text=Mint+Chocolate+Chip' },
-  { id: 5, flavor: 'Cookie Dough', description: 'Vanilla ice cream with cookie dough pieces', price: 60, image: 'https://via.placeholder.com/300x200.png?text=Cookie+Dough' },
+  { id: 1, flavor: 'Vanilla', description: 'Classic vanilla flavor', image: 'https://via.placeholder.com/300x200.png?text=Vanilla' },
+  { id: 2, flavor: 'Chocolate', description: 'Rich chocolate flavor', image: 'https://via.placeholder.com/300x200.png?text=Chocolate' },
+  { id: 3, flavor: 'Strawberry', description: 'Fresh strawberry flavor', image: 'https://via.placeholder.com/300x200.png?text=Strawberry' },
+  { id: 4, flavor: 'Mint Chocolate Chip', description: 'Cool mint with chocolate chips', image: 'https://via.placeholder.com/300x200.png?text=Mint+Chocolate+Chip' },
+  { id: 5, flavor: 'Cookie Dough', description: 'Vanilla ice cream with cookie dough pieces', image: 'https://via.placeholder.com/300x200.png?text=Cookie+Dough' },
 ]);
 
 const searchQuery = ref('');

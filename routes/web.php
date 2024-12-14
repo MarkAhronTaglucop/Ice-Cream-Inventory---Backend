@@ -1,12 +1,12 @@
 <?php
 
-use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\AdminController;
+use App\Http\Controllers\EmployeeController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
-// Welcome route
 Route::get('/', function () {
     return Inertia::render('Welcome', [
         'canLogin' => Route::has('login'),
@@ -16,34 +16,84 @@ Route::get('/', function () {
     ]);
 });
 
-// Dashboard
-Route::get('/dashboard', function () {
-    return Inertia::render('Dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
 
-// Admin Pages
-Route::middleware(['auth', 'verified'])->prefix('admin')->group(function () {
-    Route::get('/', function () {
-        return Inertia::render('Admin');
-    })->name('admin');
 
-    Route::get('/users', [AdminController::class, 'users'])->name('admin.users');
-    Route::post('/users/{userId}/update-role', [AdminController::class, 'updateUserRole'])->name('admin.updateUserRole');
-    Route::delete('/users/{id}', [AdminController::class, 'deleteUser'])->name('admin.deleteUser');
-    Route::get('/icecream', [AdminController::class, 'viewIceCream'])->name('admin.viewIceCream');
+
+Route::middleware(['auth', 'setDB'])->group(function () {
+    Route::get('/dashboard', function () {
+        return Inertia::render(
+            'Dashboard'
+        );
+    })->name('dashboard');
+    // Route::get('/user-dashboard', [UserController::class, 'display_info'])->name('user-dashboard');
+    // Route::get('/user-dashboard/search', [UserController::class, 'search'])->name('user.search');
+
+
+
+
+    Route::middleware(['employee'])->group(function () {
+        Route::get('/employee',[EmployeeController::class, 'icecream_inventory'])->name('employee.icecream');
+        Route::put('/employee/update/{id}', [EmployeeController::class, 'updateIcecream'])-> name ('employee.update');
+
+        // Route::get('/librarian-dashboard', [LibrarianController::class, 'display_info'])->name('librarian-dashboard');
+        // Route::get('/librarian-dashboard/search', [LibrarianController::class, 'search'])->name('librarian.search');
+    });
+
+
+    Route::middleware(['admin'])->group(function () {
+        Route::get('/admin', [AdminController::class, 'users'])->name('admin.users');
+        Route::put('/admin/{user}', [AdminController::class, 'deleteUser'])->name('admin.deleteUser');
+        // Route::get('/admin-dashboard', [AdminController::class, 'users'])->name('admin-dashboard');
+        // Route::put('/admin-users/{user}', [AdminController::class, 'updateUserRole'])->name('admin.updateUserRole');
+   });
 });
 
-// Employee Page
-Route::get('/employee', function () {
-    return Inertia::render('Employee');
-})->name('employee');
 
-// Customer Page
+
+
+
+
+
+
+
+
+
+
+
 Route::get('/customer', function () {
     return Inertia::render('Customer');
 })->name('customer');
 
-// Profile Management
+//route for data fetch
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');

@@ -13,9 +13,6 @@ return new class extends Migration
     {
         Schema::create('activity_logs', function (Blueprint $table) {
             $table->id('LOG_ID');
-            $table->foreignId('user_id')
-                  ->constrained('users', 'id') // Links to 'users' table
-                  ->onDelete('cascade');
             $table->string('action'); // e.g., View, Add, Edit
             $table->string('table_name'); // Name of the table affected
             $table->integer('record_id')->nullable(); // ID of the record affected

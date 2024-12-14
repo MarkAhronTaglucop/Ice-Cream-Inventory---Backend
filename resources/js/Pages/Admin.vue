@@ -1,230 +1,205 @@
 <template>
-  <Head title="Dashboard" />
+  <div class="min-h-screen bg-gray-100">
+    <Head title="Dashboard" />
 
-<AuthenticatedLayout>
-  <div class="space-y-6 p-6">
-      <h2 class="text-3xl font-bold text-blue-800">Admin Dashboard</h2>
+    <AuthenticatedLayout>
+      <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+        <h1 class="text-3xl font-bold text-blue-800 mb-6">Admin Dashboard</h1>
 
-      <!-- Navigation Tabs -->
-      <nav class="flex space-x-4 border-b border-gray-200">
-        <button
-          v-for="tab in tabs"
-          :key="tab.name"
-          @click="currentTab = tab.name"
-          class="px-3 py-2 text-sm font-medium rounded-t-lg transition-colors duration-200"
-          :class="currentTab === tab.name ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-500 hover:text-gray-700'"
-        >
-          {{ tab.label }}
-        </button>
-      </nav>
-
-      <!-- Overview -->
-      <div v-if="currentTab === 'overview'" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div
-          v-for="stat in stats"
-          :key="stat.name"
-          class="bg-white overflow-hidden shadow rounded-lg cursor-pointer hover:shadow-md transition-shadow duration-200"
-          @click="showDetailedReport(stat.name)"
-        >
-          <div class="p-5">
-            <div class="flex items-center">
-              <div class="flex-shrink-0">
-                <component :is="stat.icon" class="h-6 w-6 text-blue-600" />
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+          <!-- Statistics -->
+          <div class="bg-white p-6 rounded-lg shadow-md col-span-2">
+            <h2 class="text-xl font-semibold text-blue-600 mb-4">Statistics</h2>
+            <div class="grid grid-cols-2 gap-4">
+              <div class="bg-blue-50 p-4 rounded-lg">
+                <p class="text-sm text-blue-600 mb-1">Total Ice Creams</p>
+                <p class="text-2xl font-bold">{{ totalIceCreams }}</p>
               </div>
-              <div class="ml-5 w-0 flex-1">
-                <dl>
-                  <dt class="text-sm font-medium text-gray-500 truncate">{{ stat.name }}</dt>
-                  <dd class="text-lg font-bold text-gray-900">{{ stat.value }}</dd>
-                </dl>
+              <div class="bg-green-50 p-4 rounded-lg">
+                <p class="text-sm text-green-600 mb-1">Total Users</p>
+                <p class="text-2xl font-bold">{{ users.length }}</p>
               </div>
             </div>
           </div>
         </div>
-      </div>
 
-      <!-- User Management -->
-      <div v-if="currentTab === 'users'" class="bg-white shadow rounded-lg">
-        <div class="px-4 py-5 sm:p-6">
-          <div class="flex justify-between items-center mb-4">
-            <h3 class="text-lg font-semibold text-blue-800">User Management</h3>
-            <button @click="showAddUserModal = true" class="btn-primary">
-              <PlusIcon class="h-5 w-5 mr-2" />
-              Add User
-            </button>
-          </div>
-
-          <!-- Search Bar -->
-          <div class="mb-4">
-            <input
-              v-model="userSearchQuery"
-              type="text"
-              placeholder="Search users..."
-              class="input-primary"
-            />
-          </div>
-
+        <!-- User Management -->
+        <div class="bg-white p-6 rounded-lg shadow-md mb-6">
+          <h2 class="text-xl font-semibold text-blue-600 mb-4">User Management</h2>
           <div class="overflow-x-auto">
-            <table class="table-auto min-w-full divide-y divide-gray-200">
-              <thead class="bg-gray-50">
-                <tr>
-                  <th v-for="header in ['Name', 'Email', 'Role', 'Actions']" :key="header" class="th">
-                    {{ header }}
-                  </th>
+            <table class="w-full">
+              <thead>
+                <tr class="bg-blue-100">
+                  <th class="p-2 text-left">Name</th>
+                  <th class="p-2 text-left">Email</th>
+                  <th class="p-2 text-left">Role</th>
+                  <th class="p-2 text-left">Actions</th>
                 </tr>
               </thead>
-              <tbody class="bg-white divide-y divide-gray-200">
-                <tr v-for="user in paginatedUsers" :key="user.id">
-                  <td class="td">{{ user.name }}</td>
-                  <td class="td">{{ user.email }}</td>
-                  <td class="td">
-                    <select v-model="user.role" @change="confirmRoleChange(user)" class="select-primary">
-                      <option value="admin">Admin</option>
-                      <option value="employee">Employee</option>
-                      <option value="customer">Customer</option>
-                    </select>
-                  </td>
-                  <td class="td">
-                    <div class="flex space-x-2">
-                      <button @click="editUser(user)" class="btn-icon text-blue-600">
-                        <PencilIcon class="h-5 w-5" />
-                      </button>
-                      <button @click="confirmDeleteUser(user)" class="btn-icon text-red-600">
-                        <TrashIcon class="h-5 w-5" />
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              </tbody>
+             <tbody>
+  <tr
+    v-for="user in users"
+    :key="user.id"
+    class="border-b hover:bg-gray-50 transition duration-300"
+  >
+    <td class="p-2">{{ user.name }}</td>
+    <td class="p-2">{{ user.email }}</td>
+    <td class="p-2">
+      <select
+        v-model="user.role_id"
+        class="border border-blue-300 bg-blue-50 text-blue-700 rounded-lg p-2 w-full focus:ring-2 focus:ring-blue-500 focus:outline-none"
+        @change="saveUserRole(user)"
+      >
+        <option value="" disabled>Select Role</option>
+        <option
+          v-for="role in roles"
+          :key="role.id"
+          :value="role.id"
+        >
+          {{ role.user_type }}
+        </option>
+      </select>
+    </td>
+    <td class="p-2 flex gap-2">
+      <button
+        @click="editUser(user)"
+        class="flex items-center bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded-lg shadow transition duration-300 ease-in-out"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke-width="2"
+          stroke="currentColor"
+          class="w-4 h-4 mr-1"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M16.862 3.487a2.25 2.25 0 10-3.194 3.194L19.5 12.512m0 0L12.487 19.5m7.013-7.013h-1.125a2.25 2.25 0 00-2.25 2.25v1.125m-7.016-7.01a2.25 2.25 0 10-3.192 3.192L12.488 19.5m0 0H11.25a2.25 2.25 0 01-2.25-2.25v-1.125"
+          />
+        </svg>
+        Edit
+      </button>
+      <button
+        @click="deleteUser(user.id)"
+        class="flex items-center bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded-lg shadow transition duration-300 ease-in-out"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke-width="2"
+          stroke="currentColor"
+          class="w-4 h-4 mr-1"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M19.5 12h-15m0 0L7.5 8.25m-3 3.75l3 3.75"
+          />
+        </svg>
+        Delete
+      </button>
+    </td>
+  </tr>
+</tbody>
+
             </table>
           </div>
+        </div>
 
-          <!-- Pagination -->
-          <div class="mt-4 flex justify-between items-center">
-            <button @click="prevPage" :disabled="currentPage === 1" class="btn-secondary">
-              Previous
-            </button>
-            <span class="text-sm text-gray-700">Page {{ currentPage }} of {{ totalPages }}</span>
-            <button @click="nextPage" :disabled="currentPage === totalPages" class="btn-secondary">
-              Next
-            </button>
+        <!-- Activity Logs -->
+        <div class="bg-white p-6 rounded-lg shadow-md">
+          <h2 class="text-xl font-semibold text-blue-600 mb-4">Activity Logs</h2>
+          <div class="max-h-64 overflow-y-auto">
+            <ul class="space-y-2">
+              <li v-for="log in activityLogs" :key="log.id" class="border-b pb-2 hover:bg-gray-50">
+                <span class="font-semibold text-blue-600">{{ log.user }}</span>
+                <span class="text-gray-700">{{ log.action }}</span>
+                <span class="text-gray-500 text-sm">at {{ formatDate(log.timestamp) }}</span>
+              </li>
+            </ul>
           </div>
         </div>
       </div>
+    </AuthenticatedLayout>
+  </div>
+</template>
 
-      <!-- Activity Logs -->
-      <div v-if="currentTab === 'logs'" class="bg-white shadow rounded-lg">
-        <div class="px-4 py-5 sm:p-6">
-          <div class="flex justify-between items-center mb-4">
-            <h3 class="text-lg font-semibold text-blue-800">Activity Logs</h3>
-            <button @click="toggleLogs" class="btn-link">
-              {{ showAllLogs ? 'Collapse' : 'Expand' }}
-            </button>
-          </div>
-          <ul class="divide-y divide-gray-200">
-            <li v-for="log in displayedLogs" :key="log.id" class="py-4">
-              <div class="flex space-x-3">
-                <component :is="getLogIcon(log.action)" class="h-6 w-6 text-gray-400" />
-                <div>
-                  <p class="text-sm font-medium">{{ log.user }}</p>
-                  <p class="text-sm text-gray-500">{{ log.action }} - {{ log.timestamp }}</p>
-                </div>
-              </div>
-            </li>
-          </ul>
-        </div>
-      </div>
+<script setup>
+import { ref } from "vue";
+import { Head, router } from "@inertiajs/vue3";
+import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 
-      <!-- Add User Modal -->
-      <div v-if="showAddUserModal" class="modal">
-        <div class="modal-content">
-          <h3 class="text-lg leading-6 font-medium">Add New User</h3>
-          <input v-model="newUser.name" type="text" placeholder="Name" class="input-primary" />
-          <input v-model="newUser.email" type="email" placeholder="Email" class="input-primary" />
-          <select v-model="newUser.role" class="select-primary">
-            <option value="admin">Admin</option>
-            <option value="employee">Employee</option>
-            <option value="customer">Customer</option>
-          </select>
-          <div class="modal-actions">
-            <button @click="addUser" class="btn-primary">Add</button>
-            <button @click="showAddUserModal = false" class="btn-secondary">Cancel</button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </AuthenticatedLayout>
-  </template>
-  
-  <script setup>
-  import { ref, computed } from "vue";
-  import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
-  import { Head, router } from "@inertiajs/vue3";
-  import { PlusIcon, PencilIcon, TrashIcon, IceCream, Users, ShoppingCart, Activity } from 'lucide-vue-next';
-  
-  // Tabs and State
-const tabs = [
-  { name: "overview", label: "Overview" },
-  { name: "users", label: "Users" },
-  { name: "logs", label: "Activity Logs" },
-];
-const currentTab = ref("overview");
-
-// Statistics
-const stats = [
-  { name: "Total Ice Creams", value: "24", icon: IceCream },
-  { name: "Total Users", value: "1,234", icon: Users },
-  { name: "Daily Active Users", value: "573", icon: Activity },
-];
-
-// Users and Pagination
-const users = ref([
-  { id: 1, name: "John Doe", email: "john@example.com", role: "admin" },
-  { id: 2, name: "Jane Smith", email: "jane@example.com", role: "employee" },
-  { id: 3, name: "Bob Johnson", email: "bob@example.com", role: "customer" },
-]);
-const userSearchQuery = ref("");
-const currentPage = ref(1);
-const usersPerPage = 5;
-const filteredUsers = computed(() =>
-  users.value.filter(
-    (user) =>
-      user.name.toLowerCase().includes(userSearchQuery.value.toLowerCase()) ||
-      user.email.toLowerCase().includes(userSearchQuery.value.toLowerCase())
-  )
-);
-const paginatedUsers = computed(() => {
-  const start = (currentPage.value - 1) * usersPerPage;
-  const end = start + usersPerPage;
-  return filteredUsers.value.slice(start, end);
+const props = defineProps({
+  users: Array,
+  roles: Array,
 });
-const totalPages = computed(() =>
-  Math.ceil(filteredUsers.value.length / usersPerPage)
-);
 
-// Activity Logs
-const activityLogs = ref([
-  { id: 1, user: "John Doe", action: "Added a new ice cream flavor", timestamp: "2024-05-10 14:30" },
-]);
-const showAllLogs = ref(false);
-const displayedLogs = computed(() =>
-  showAllLogs.value ? activityLogs.value : activityLogs.value.slice(0, 5)
-);
+// Reactive state for users
+const users = ref([...props.users]);
 
-// Modal State
-const showAddUserModal = ref(false);
-const newUser = ref({ name: "", email: "", role: "customer" });
-
-// Methods
-const addUser = () => {
-  users.value.push({ id: users.value.length + 1, ...newUser.value });
-  newUser.value = { name: "", email: "", role: "customer" };
-  showAddUserModal.value = false;
+// Get role based on user id
+const getRole = (roleId) => {
+  const role = props.roles.find((role) => role.id === roleId);
+  return role ? role.user_type : "Unknown";
 };
-const prevPage = () => currentPage.value > 1 && currentPage.value--;
-const nextPage = () => currentPage.value < totalPages.value && currentPage.value++;
-const toggleLogs = () => (showAllLogs.value = !showAllLogs.value);
-const getLogIcon = (action) => (action.toLowerCase().includes("add") ? PlusIcon : Activity);
 
-  </script>
+const deleteUser = (userId) => {
+  if (confirm("Are you sure you want to delete this user?")) {
+    router.put(route("admin.deleteUser", { user: userId }), {
+      onSuccess: () => {
+        // Filter out the deleted user
+        users.value = users.value.filter((user) => user.id !== userId);
+        alert("User deleted successfully.");
+      },
+      onError: (error) => {
+        alert(
+          error.response?.data?.message ||
+          "There was an error deleting the user."
+        );
+      },
+    });
+  }
+};
 
-  
+const totalIceCreams = ref(25);
+
+const activityLogs = ref([
+  { id: 1, user: 'John Doe', action: 'added a new ice cream flavor', timestamp: '2023-05-10 14:30' },
+  { id: 2, user: 'Jane Smith', action: 'updated inventory', timestamp: '2023-05-10 15:45' },
+  { id: 3, user: 'Bob Johnson', action: 'placed an order', timestamp: '2023-05-10 16:20' },
+]);
+
+const editUser = (user) => {
+  // Implement edit user logic
+  console.log('Editing user:', user);
+};
+
+const saveUserRole = (user) => {
+  // Here you would typically make an API call to update the user's role
+  console.log(`Saving new role for user ${user.id}: ${user.role_id}`);
+  // For demonstration, we'll just log the change and add it to activity logs
+  const newRole = getRole(user.role_id);
+  activityLogs.value.unshift({
+    id: activityLogs.value.length + 1,
+    user: user.name,
+    action: `changed role to ${newRole}`,
+    timestamp: new Date().toISOString()
+  });
+};
+
+const formatDate = (dateString) => {
+  const options = { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' };
+  return new Date(dateString).toLocaleDateString(undefined, options);
+};
+
+// Ensure all users have a role
+users.value.forEach(user => {
+  if (!user.role_id) {
+    const defaultRole = props.roles.find(role => role.user_type.toLowerCase() === 'customer') || props.roles[0];
+    user.role_id = defaultRole.id;
+  }
+});
+</script>
