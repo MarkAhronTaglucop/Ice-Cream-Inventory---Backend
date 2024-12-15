@@ -30,22 +30,35 @@ Route::middleware(['auth', 'setDB'])->group(function () {
 
 
 
+    
+    Route::middleware(['admin'])->group(function () {
+        Route::get('/admin', [AdminController::class, 'users'])->name('admin.users');
+        Route::delete('/admin/{user}', [AdminController::class, 'deleteUser'])->name('admin.deleteUser');
+        Route::put('/update-user-role/{userId}', [AdminController::class, 'updateUserRole'])->name('admin.updateUserRole');
+        Route::get('/admin/dashboard', [AdminController::class, 'totalIcecreams'])->name('admin.dashboard');
+
+
+
+
+
+        // Route::get('/admin-dashboard', [AdminController::class, 'users'])->name('admin-dashboard');
+        // Route::put('/admin-users/{user}', [AdminController::class, 'updateUserRole'])->name('admin.updateUserRole');
+   });
+
 
     Route::middleware(['employee'])->group(function () {
         Route::get('/employee',[EmployeeController::class, 'icecream_inventory'])->name('employee.icecream');
         Route::put('/employee/update/{id}', [EmployeeController::class, 'updateIcecream'])-> name ('employee.update');
+        Route::post('/employee/add', [EmployeeController::class, 'addIcecream'])->name('employee.add');
+
+
 
         // Route::get('/librarian-dashboard', [LibrarianController::class, 'display_info'])->name('librarian-dashboard');
         // Route::get('/librarian-dashboard/search', [LibrarianController::class, 'search'])->name('librarian.search');
     });
 
 
-    Route::middleware(['admin'])->group(function () {
-        Route::get('/admin', [AdminController::class, 'users'])->name('admin.users');
-        Route::put('/admin/{user}', [AdminController::class, 'deleteUser'])->name('admin.deleteUser');
-        // Route::get('/admin-dashboard', [AdminController::class, 'users'])->name('admin-dashboard');
-        // Route::put('/admin-users/{user}', [AdminController::class, 'updateUserRole'])->name('admin.updateUserRole');
-   });
+    
 });
 
 

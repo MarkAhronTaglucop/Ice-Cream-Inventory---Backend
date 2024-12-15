@@ -41,7 +41,7 @@ const showingNavigationDropdown = ref(false);
                             <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
                                 <NavLink :href="route('employee.icecream')" v-if="$page.props.auth.user.role_id === 1 || $page.props.auth.user.role_id === 2 "
                                     :active="route().current('employee.icecream')">
-                                    Employee
+                                    Icecream Inventory
                                 </NavLink>
                             </div>
 

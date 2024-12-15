@@ -43,9 +43,8 @@ class AdminController extends Controller
         DB::table('users')->where('id', $userId)->delete();
 
         return redirect()->back()->with('message', 'User deleted successfully');
+        
     }
-
-
 
 
 
@@ -71,10 +70,27 @@ class AdminController extends Controller
         return back()->with('message', 'User role updated successfully!');
     }
 
-    // View all ice cream records
-    // public function viewIceCream()
-    // {
-    //     $iceCreams = DB::table('icecreams')->get();
-    //     return Inertia::render('IceCreamList', ['iceCreams' => $iceCreams]);
-    // }
+    
+    // Function to get the total number of ice creams
+        public function totalIcecreams()
+    {
+    // Count the total number of ice cream items in the database
+         $totalIcecreams = Icecream::count();
+
+    // Return the result directly 
+        return view('admin.dashboard', compact('totalIcecreams'));
+    } 
+
+
+    public function icecreamStoreInventory()
+    {
+        // Fetch all ice creams from the database
+        $icecreams = DB::table('icecream')->get();
+    
+        // Pass the data to the Admin Vue component
+        return Inertia::render('Admin', [
+            'icecreams' => $icecreams,
+        ]);
+    }
+
 }
