@@ -13,41 +13,36 @@ class CustomerController extends Controller
     // Display the customer dashboard with available ice creams
     public function display_info()
     {
-        // Fetch all ice creams with their details
-        $iceCreams = IceCream::where('status', 'Available')->get(); // Only show available ice creams
+        $icecreams = DB::select('SELECT * FROM available_icecreams');
+
 
         return Inertia::render('Customer', [
-            'iceCreams' => $iceCreams, // Pass ice cream data to the front-end
+            'icecreams' => $icecreams
         ]);
     }
 
-     // Search for ice creams based on name or flavor
+
     public function search(Request $request)
     {
-        $searchQuery = $request->input('searchQuery', '');
-
-        if (empty($searchQuery)) {
-            return Inertia::render('Customer', [
-                'searchedIceCreams' => [],
-            ]);
-        }
+        // Validate the input
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+        ]);
 
         try {
-            // Perform a search for ice creams based on name or flavor (modify as needed)
-            $searchedIceCreams = IceCream::where('name', 'like', '%' . $searchQuery . '%')
-                ->orWhere('flavor', 'like', '%' . $searchQuery . '%')
-                ->where('status', 'Available') // Only show available ice creams
-                ->get();
-        } catch (\Exception $e) {
-            // Handle any exceptions during the search process
-            return Inertia::render('Customer', [
-                'searchedIceCreams' => [],
-                'error' => $e->getMessage(), // Optional: Include error message
+            // Call the PostgreSQL function
+            $results = DB::select('SELECT * FROM SearchIceCreamByName(?)', [
+                $validated['name']
             ]);
-        }
+            // Pass results to the Inertia component
+            return Inertia::render('Customer', [
+                'icecreamsresult' => $results,
+            ]);
+        } catch (\Exception $e) {
+            // Log the error and return an error response
 
-        return Inertia::render('Customer', [
-            'searchedIceCreams' => $searchedIceCreams, // Return the search results to the front-end
-        ]);
+            return back()->with('error', 'Failed to search for ice creams. Please try again.');
+        }
     }
+
 }

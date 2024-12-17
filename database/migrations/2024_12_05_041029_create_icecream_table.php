@@ -11,18 +11,34 @@ return new class extends Migration
      */
     public function up(): void
 {
-    Schema::create('icecream', function (Blueprint $table) {
+    Schema::create('icecreams', function (Blueprint $table) {
         $table->id();
         $table->string('name');
-        $table->decimal('price', 8, 2);
-        $table->integer('stock');
-        $table->date('manufactured_date');
         $table->text('description')->nullable();
+        $table->date('manufactured_date');
+        $table->string('image_url')->nullable(); // Add this column for storing the image URL or path
+        $table->timestamps();
+    });
+
+    Schema::create('prices', function (Blueprint $table) {
+        $table->id();
+        $table->unsignedBigInteger('icecream_id');
+        $table->decimal('price', 8, 2);
+        $table->timestamps();
+    
+        $table->foreign('icecream_id')->references('id')->on('icecreams')->onDelete('cascade');
+    });
+
+    Schema::create('stocks', function (Blueprint $table) {
+        $table->id();
+        $table->unsignedBigInteger('icecream_id');
+        $table->integer('stock');
         $table->enum('status', ['Available', 'Out of Stock'])->default('Available');
         $table->timestamps();
     
-
+        $table->foreign('icecream_id')->references('id')->on('icecreams')->onDelete('cascade');
     });
+    
     
 }
 
@@ -32,6 +48,10 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('flavors');
+        Schema::dropIfExists('icecreams');
+        Schema::dropIfExists('stocks');
+        Schema::dropIfExists('prices');
+
+
     }
 };

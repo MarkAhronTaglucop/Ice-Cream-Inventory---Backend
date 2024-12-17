@@ -13,12 +13,14 @@ class SetDBConnection
     {
         // Default connection
         $connection = config('database.default');
+        $userId = null; // Default to null if no user is authenticated
 
-        $user = Auth::user();
         
 
         if (Auth::check()) {
             $user = Auth::user();
+            $userId = $user->id; // Retrieve the authenticated user's ID
+
 
             // Dynamically set connection based on role
             $connection = match ($user->role_id) {
@@ -34,6 +36,10 @@ class SetDBConnection
         config(['database.default' => $connection]);
         DB::reconnect($connection);
 
+        // Set the session variable for the user ID in PostgreSQL
+        if ($userId) {
+            DB::statement("SET myapp.user_id = {$userId}");
+        }
 
 
         return $next($request);

@@ -9,12 +9,27 @@ use Inertia\Inertia;
 
 class AdminController extends Controller
 {
-    // // View roles and users
+    // // View all
     public function users()
     {
         $users = User::with('role')->get();
         $roles = DB::table('roles')->get();
-        return Inertia::render('Admin', ['users' => $users, 'roles' => $roles]);
+        $summary = DB::table('inventory_summary')->first();
+        $logs = DB::table('all_activity_logs')->get();
+        return Inertia::render('Admin', [
+            'users' => $users, 
+            'roles' => $roles,
+            'summary' => $summary,
+            'logs' => $logs,
+        ]);
+    }
+
+    public function refresh()
+    {
+        // Refresh the materialized view
+        DB::statement('REFRESH MATERIALIZED VIEW all_activity_logs');
+
+        return redirect()->back()->with('message', 'refreshed successfully');
     }
 
 
@@ -68,29 +83,6 @@ class AdminController extends Controller
 
         DB::table('users')->where('id', $userId)->update(['role_id' => $validated['role_id']]);
         return back()->with('message', 'User role updated successfully!');
-    }
-
-    
-    // Function to get the total number of ice creams
-        public function totalIcecreams()
-    {
-    // Count the total number of ice cream items in the database
-         $totalIcecreams = Icecream::count();
-
-    // Return the result directly 
-        return view('admin.dashboard', compact('totalIcecreams'));
-    } 
-
-
-    public function icecreamStoreInventory()
-    {
-        // Fetch all ice creams from the database
-        $icecreams = DB::table('icecream')->get();
-    
-        // Pass the data to the Admin Vue component
-        return Inertia::render('Admin', [
-            'icecreams' => $icecreams,
-        ]);
     }
 
 }

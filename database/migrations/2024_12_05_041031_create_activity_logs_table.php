@@ -12,11 +12,12 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('activity_logs', function (Blueprint $table) {
-            $table->id('LOG_ID');
-            $table->string('action'); // e.g., View, Add, Edit
-            $table->string('table_name'); // Name of the table affected
-            $table->integer('record_id')->nullable(); // ID of the record affected
-            $table->timestamp('timestamp')->useCurrent();
+            $table->id();
+            $table->integer('user_id');
+            $table->string('table_name');
+            $table->string('action',10);
+            $table->timestamp('created_at')->default(DB::raw('CURRENT_TIMESTAMP'));
+            $table->string('user_type',10);
         });
         
     }
